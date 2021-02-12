@@ -40,6 +40,23 @@ class __Kumar(__AbstractDataset):
         return ann
 
 
+class __TabSap(__AbstractDataset):
+
+    def load_img(self, path):
+        return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+
+
+    def load_ann(self, inst_path, type_path):
+
+        ann_inst = cv2.imread(inst_path, -1)
+        ann_type = cv2.imread(type_path, -1)
+
+        ann = np.dstack([ann_inst, ann_type])
+        ann = ann.astype('int32')
+
+        return ann
+
+
 ####
 class __CPM17(__AbstractDataset):
     """Defines the CPM 2017 dataset as originally introduced in:
@@ -102,6 +119,7 @@ def get_dataset(name):
         "kumar": lambda: __Kumar(),
         "cpm17": lambda: __CPM17(),
         "consep": lambda: __CoNSeP(),
+        'tabsap': lambda: __TabSap(),
     }
     if name.lower() in name_dict:
         return name_dict[name]()
