@@ -44,7 +44,7 @@ class Config(object):
             if act_shape != [256,256] or out_shape != [164,164]:
                 raise Exception("If using `original` mode, input shape must be [256,256] and output shape must be [164,164]")
 
-        self.dataset_name = "consep" # extracts dataset info from dataset.py
+        self.dataset_name = "tabsap" # extracts dataset info from dataset.py
         self.log_dir = "logs/" # where checkpoints will be saved
 
         # paths to training and validation patches
