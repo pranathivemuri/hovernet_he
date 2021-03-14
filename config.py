@@ -45,7 +45,7 @@ class Config(object):
                 raise Exception("If using `original` mode, input shape must be [256,256] and output shape must be [164,164]")
 
         self.dataset_name = "tabsap" # extracts dataset info from dataset.py
-        self.log_dir = "logs/" # where checkpoints will be saved
+        self.log_dir = "/data/hovernet_training_data/tabsap/logs/" # where checkpoints will be saved
 
         # paths to training and validation patches
         self.train_dir_list = [
