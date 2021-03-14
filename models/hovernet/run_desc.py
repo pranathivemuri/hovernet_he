@@ -279,12 +279,11 @@ def proc_valid_step_output(raw_data, nr_types=None):
     over_correct = 0
     prob_np = raw_data["prob_np"]
     true_np = raw_data["true_np"]
-    print(prob_np.shape)
-    print(true_np.shape)
+    print(len(prob_np))
+    print(len(true_np))
 
-    for idx in range(len(raw_data["true_np"])):
+    for idx, patch_true_np in enumerate(true_np):
         patch_prob_np = prob_np[idx]
-        patch_true_np = true_np[idx]
         patch_pred_np = np.array(patch_prob_np > 0.5, dtype=np.int32)
         inter, total = _dice_info(patch_true_np, patch_pred_np, 1)
         correct = (patch_pred_np == patch_true_np).sum()
