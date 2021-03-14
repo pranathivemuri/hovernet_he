@@ -15,7 +15,7 @@ print(input_path, output_path)
 downsample_factor = 3
 factor = 2 ** (downsample_factor - 1)
 image_paths = natsort.natsorted(
-    glob.glob(os.path.join(input_path, "*.jpg")))
+    glob.glob(os.path.join(input_path, "*.png")))
 
 for path in image_paths:
     img = imread(path)
