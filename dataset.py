@@ -1,7 +1,7 @@
-import glob
 import cv2
 import numpy as np
 import scipy.io as sio
+from skimage.io import imread
 
 
 class __AbstractDataset(object):
@@ -43,13 +43,12 @@ class __Kumar(__AbstractDataset):
 class __TabSap(__AbstractDataset):
 
     def load_img(self, path):
-        return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
-
+        return imread(path)
 
     def load_ann(self, inst_path, type_path):
 
-        ann_inst = cv2.imread(inst_path, -1)
-        ann_type = cv2.imread(type_path, -1)
+        ann_inst = imread(inst_path, -1)
+        ann_type = imread(type_path, -1)
 
         ann = np.dstack([ann_inst, ann_type])
         ann = ann.astype('int32')
