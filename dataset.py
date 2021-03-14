@@ -43,12 +43,14 @@ class __Kumar(__AbstractDataset):
 class __TabSap(__AbstractDataset):
 
     def load_img(self, path):
-        return imread(path)
+        image = imread(path)
+        return image
 
-    def load_ann(self, inst_path, type_path):
-
-        ann_inst = imread(inst_path, -1)
-        ann_type = imread(type_path, -1)
+    def load_ann(self, path, with_type=False):
+        # assumes that ann is HxW
+        ann_inst = sio.loadmat(path)["inst_map"]
+        if with_type:
+            ann_type = sio.loadmat(path)["type_map"]
 
         ann = np.dstack([ann_inst, ann_type])
         ann = ann.astype('int32')
