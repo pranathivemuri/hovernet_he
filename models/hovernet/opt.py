@@ -57,7 +57,7 @@ def get_config(nr_type, mode):
                     },
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
-                "batch_size": {"train": 16, "valid": 16,},  # engine name : value
+                "batch_size": {"train": 4, "valid": 4,},  # engine name : value
                 "nr_epochs": 50,
             },
             {
@@ -90,7 +90,7 @@ def get_config(nr_type, mode):
                     },
                 },
                 "target_info": {"gen": (gen_targets, {}), "viz": (prep_sample, {})},
-                "batch_size": {"train": 4, "valid": 8,}, # batch size per gpu
+                "batch_size": {"train": 2, "valid": 4,}, # batch size per gpu
                 "nr_epochs": 50,
             },
         ],
