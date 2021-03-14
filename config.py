@@ -49,10 +49,10 @@ class Config(object):
 
         # paths to training and validation patches
         self.train_dir_list = [
-            "train_patches_path"
+            "/data/hovernet_training_data/tabsap/tabsap/train/"
         ]
         self.valid_dir_list = [
-            "valid_patches_path"
+            "/data/hovernet_training_data/tabsap/tabsap/valid/"
         ]
 
         self.shape_info = {
