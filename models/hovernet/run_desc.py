@@ -279,6 +279,9 @@ def proc_valid_step_output(raw_data, nr_types=None):
     over_correct = 0
     prob_np = raw_data["prob_np"]
     true_np = raw_data["true_np"]
+    print(prob_np.shape)
+    print(true_np.shape)
+
     for idx in range(len(raw_data["true_np"])):
         patch_prob_np = prob_np[idx]
         patch_true_np = true_np[idx]
