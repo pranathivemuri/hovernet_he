@@ -11,6 +11,7 @@ from skimage.io import imread
 
 input_path = sys.argv[1]
 output_path = sys.argv[2]
+print(input_path, output_path)
 downsample_factor = 3
 factor = 2 ** (downsample_factor - 1)
 image_paths = natsort.natsorted(
