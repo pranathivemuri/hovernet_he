@@ -23,8 +23,8 @@ for path in image_paths:
     binary_image = np.zeros_like(ann_type)
     binary_image[ann_type != 0] = 1
     ann_inst, num_cells = label(binary_image)
-    print(np.unique(ann_inst))
-    print(np.unique(ann_type))
+    assert np.unique(ann_inst).tolist() == list(range(0, np.max(ann_inst)))
+    assert np.unique(ann_inst).tolist() == list(range(0, np.max(ann_inst)))
     mdict = {"inst_map": ann_inst, "type_map": ann_type}
     output_mat_path = os.path.join(
         output_path, os.path.basename(path).split(".")[0] + ".mat")
