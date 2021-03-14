@@ -28,18 +28,18 @@ if __name__ == "__main__":
 
     # Name of dataset - use Kumar, CPM17 or CoNSeP.
     # This used to get the specific dataset img and ann loading scheme from dataset.py
-    dataset_name = "consep"
-    save_root = "dataset/training_data/%s/" % dataset_name
+    dataset_name = "tabsap"
+    save_root = "/data/hovernet_training_data/%s/" % dataset_name
 
     # a dictionary to specify where the dataset path should be
     dataset_info = {
         "train": {
-            "img": (".png", "dataset/CoNSeP/Train/Images/"),
-            "ann": (".mat", "dataset/CoNSeP/Train/Labels/"),
+            "img": (".tif", "/data/tabsap/train/images/"),
+            "ann": (".mat", "/data/tabsap/train/labels/"),
         },
         "valid": {
-            "img": (".png", "dataset/CoNSeP/Test/Images/"),
-            "ann": (".mat", "dataset/CoNSeP/Test/Labels/"),
+            "img": (".tif", "/data/tabsap/test/images/"),
+            "ann": (".mat", "/data/tabsap/test/labels/"),
         },
     }
 
