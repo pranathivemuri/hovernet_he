@@ -50,7 +50,7 @@ def _init_worker_child(lock_):
 ####
 def _remove_inst(inst_map, remove_id_list):
     """Remove instances with id in remove_id_list.
-
+    
     Args:
         inst_map: map of instances
         remove_id_list: list of ids to remove from inst_map
@@ -96,7 +96,7 @@ def _get_tile_info(img_shape, tile_shape, ambiguous_size=128):
         img_shape: input image shape
         tile_shape: tile shape used for post processing
         ambiguous_size: used to define area at tile boundaries
-
+    
     """
     # * get normal tiling set
     tile_grid_top_left, _ = _get_patch_top_left_info(img_shape, tile_shape, tile_shape)
@@ -303,7 +303,7 @@ class InferManager(base.InferManager):
         Args:
             patch_info_list: patch input coordinate information
             has_output_info: whether output information is given
-
+        
         """
         down_sample_ratio = self.wsi_mask.shape[0] / self.wsi_proc_shape[0]
         selected_indices = []
@@ -332,7 +332,7 @@ class InferManager(base.InferManager):
         Args:
             chunk_info_list: list of inference tile coordinate information
             patch_info_list: list of patch coordinate information
-
+        
         """
         # 1 dedicated thread just to write results back to disk
         proc_pool = Pool(processes=1)
@@ -474,38 +474,36 @@ class InferManager(base.InferManager):
         )
         self.wsi_proc_shape = np.array(self.wsi_proc_shape[::-1])  # to Y, X
 
-        for mag in self.wsi_handler.metadata["available_mag"]:
-            print("Processing for mag ",str(mag))
-            if msk_path is not None and os.path.isfile(msk_path):
-                self.wsi_mask = cv2.imread(msk_path)
-                self.wsi_mask = cv2.cvtColor(self.wsi_mask, cv2.COLOR_BGR2GRAY)
-                self.wsi_mask[self.wsi_mask > 0] = 1
-            else:
-                log_info(
-                    "WARNING: No mask found, generating mask via thresholding at " + str(mag) + "!"
+        if msk_path is not None and os.path.isfile(msk_path):
+            self.wsi_mask = cv2.imread(msk_path)
+            self.wsi_mask = cv2.cvtColor(self.wsi_mask, cv2.COLOR_BGR2GRAY)
+            self.wsi_mask[self.wsi_mask > 0] = 1
+        else:
+            log_info(
+                "WARNING: No mask found, generating mask via thresholding at 1.25x!"
+            )
+
+            from skimage import morphology
+
+            # simple method to extract tissue regions using intensity thresholding and morphological operations
+            def simple_get_mask():
+                scaled_wsi_mag = 1.25  # ! hard coded
+                wsi_thumb_rgb = self.wsi_handler.get_full_img(read_mag=scaled_wsi_mag)
+                gray = cv2.cvtColor(wsi_thumb_rgb, cv2.COLOR_RGB2GRAY)
+                _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
+                mask = morphology.remove_small_objects(
+                    mask == 0, min_size=16 * 16, connectivity=2
                 )
+                mask = morphology.remove_small_holes(mask, area_threshold=128 * 128)
+                mask = morphology.binary_dilation(mask, morphology.disk(16))
+                return mask
 
-                from skimage import morphology
-
-                # simple method to extract tissue regions using intensity thresholding and morphological operations
-                def simple_get_mask(mag):
-                    wsi_thumb_rgb = self.wsi_handler.get_full_img(read_mag=mag)
-                    gray = cv2.cvtColor(wsi_thumb_rgb, cv2.COLOR_RGB2GRAY)
-                    _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
-                    mask = morphology.remove_small_objects(
-                        mask == 0, min_size=16 * 16, connectivity=2
-                    )
-                    mask = morphology.remove_small_holes(mask, area_threshold=128 * 128)
-                    mask = morphology.binary_dilation(mask, morphology.disk(16))
-                    return mask
-
-                self.wsi_mask = np.array(simple_get_mask(mag) > 0, dtype=np.uint8)
-            if np.sum(self.wsi_mask) == 0:
-                log_info("Skip due to empty mask!")
-                return
-            if self.save_mask:
-                cv2.imwrite("%s/mask/%s_mag%d.png" % (output_dir, wsi_name,mag), self.wsi_mask * 255)
-                print("Saved mask for mag ",str(mag))
+            self.wsi_mask = np.array(simple_get_mask() > 0, dtype=np.uint8)
+        if np.sum(self.wsi_mask) == 0:
+            log_info("Skip due to empty mask!")
+            return
+        if self.save_mask:
+            cv2.imwrite("%s/mask/%s.png" % (output_dir, wsi_name), self.wsi_mask * 255)
         if self.save_thumb:
             wsi_thumb_rgb = self.wsi_handler.get_full_img(read_mag=1.25)
             cv2.imwrite(
@@ -715,7 +713,7 @@ class InferManager(base.InferManager):
 
         Args:
             run_args: arguments as defined in run_infer.py
-
+        
         """
         self._parse_args(run_args)
 
